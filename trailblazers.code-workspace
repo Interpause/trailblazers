@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "app"
+		},
+		{
+			"path": "server"
+		},
+		{
+			"name": "Trailblazers",
+			"path": "."
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
