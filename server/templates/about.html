@@ -1,0 +1,26 @@
+{% extends 'baseFull.html' %}
+
+<!--Will write to both blocks at once!-->
+{% block header %}
+  <h1>{% block title %}About{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h3>Introduction</h3>
+        <p>
+            HEy
+            There
+            I am a ParaGraph
+        </p>
+        <p>
+            And I am Another Paragraph....
+        </p>
+    </section>
+    <section>
+        <h3>Team</h3>
+        <p>John</p>
+        <p>Kenneth</p>
+        <p>Andrew</p>
+    </section>
+{% endblock %}

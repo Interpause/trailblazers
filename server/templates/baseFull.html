@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0'/>
+    <title class='skiptranslate'>{% block title %}Base Title{% endblock %} — v0x0001</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="prefetch" href="{{ url_for('getMain') }}">
+    <link rel="prefetch" href="{{ url_for('getAbout') }}">
+    <link rel="prefetch" href="{{ url_for('getCamera') }}">
+    <link rel="prefetch" href="{{ url_for('checkMC') }}">
+
+    {% block head %}{% endblock %}
+    <style>
+        nav{
+            font-size:1rem;
+            vertical-align:middle;
+        }
+        body{align-content:center;}
+        .badge{font-size:100%;}
+        .btn.big i{font-size:14vmin !important;}
+        .btn.big label{font-size:4vmin !important;}
+        #google_translate_element div{
+            display:inline-flex;
+            transform: scale(1.2,1.2);
+            margin-left:10%;
+        }
+    </style>
+</head>
+<body>
+    <nav> <!--bootstrap nav bar is better. this might need a rewrite-->
+        <h1 class='navbar-brand skiptranslate'>{% if g.user %}User: {{ g.user.name }} — {% endif %}{{ time }}</h1>
+        <div class='list-group list-group-horizontal-sm' style='display:none'>
+            <span class='list-group-item col-sm-3 col-xl-2'>Site Links:</span>
+            {% for nav in navbar %}
+            <a class='list-group-item list-group-item-action border-top-0 border-bottom-0 col-sm-3 col-xl-2' href='{{ url_for(nav.func) }}'>{{ nav.label }}
+                <span class='badge badge-primary badge-pill float-right'>0</span>
+                <span class="sr-only">is an arbitrary number for the audio-inclined</span>
+            </a>
+            {% endfor %}
+        </div>
+    </nav>
+    <header>
+        {% block header %}{% endblock %}
+        {% if error %}
+        <h1>{{ error.code }}</h1>
+        <h6>{{ error.description }}</h6>
+        <a href="{{ url_for('getRoot') }}">Return to main...</a>
+        {% endif %}
+    </header>
+    {% block content %}
+    <!--TIL: Sections are cool things. Like sub-pages in a page with their own headers...-->
+    {% endblock %}
+    <footer class="fixed-bottom container-fluid">
+        <div class="row row-cols-1">
+            <div class="col d-flex">{% block footer %}{% endblock %}</div>
+            <div class="col d-flex p-0">
+                <i class="material-icons skiptranslate align-self-center" style="font-size:270%">language</i>
+                <span id="google_translate_element" class='align-self-center'>
+                    <h3 class='placeholder'>Loading translator...</h3>
+                    <script type="text/javascript">
+                        function googleTranslateElementInit() {
+                            new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+                            document.querySelector('#google_translate_element .placeholder').remove();
+                        }
+                        setTimeout(()=>{
+                            let script = document.createElement('script');
+                            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                            script.type = 'text/javascript';
+                            document.getElementById('google_translate_element').appendChild(script);
+                        },0);
+                    </script>
+                </span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+

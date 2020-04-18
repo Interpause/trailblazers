@@ -12,6 +12,14 @@
 		}
 	],
 	"settings": {
-		"git.ignoreLimitWarning": true
+		"git.ignoreLimitWarning": true,
+		"sqltools.connections": [
+			{
+				"database": "${workspaceFolder:server}/test.db",
+				"dialect": "SQLite",
+				"name": "test_db"
+			}
+		],
+		"sqltools.useNodeRuntime": true
 	}
 }

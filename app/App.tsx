@@ -1,10 +1,11 @@
-import React from 'react';
+import  React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 
-export default function App() {
+function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start fucking on your app!</Text>
+      <Text>Open up App.tsx to start hating on your app!</Text>
     </View>
   );
 }
@@ -16,4 +17,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  modal: {
+
+  }
 });
+
+export default App;

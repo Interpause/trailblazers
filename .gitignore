@@ -8,9 +8,9 @@
 *.key
 *.mobileprovision
 *.orig.*
+../.expo-shared
 web-build/
 web-report/
-**/.vscode
 
 # macOS
 .DS_Store
