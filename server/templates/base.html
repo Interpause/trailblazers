@@ -1,0 +1,150 @@
+{% set navbar = [
+    ('getHeatmap','Heatmap'),
+    ('getAbout','About')
+] -%}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0'/>
+    <title class='skiptranslate' id='dynamic_title'></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        nav{
+            font-size:1rem;
+            vertical-align:middle;
+        }
+        body{align-content:center;}
+        .badge{font-size:100%;}
+        .btn.big i{font-size:14vmin !important;}
+        .btn.big label{font-size:4vmin !important;}
+        #google_translate_element div{
+            display:inline-flex;
+            transform: scale(1.2,1.2);
+            margin-left:10%;
+        }
+    </style>
+    <div id='dynamic_head'></div>
+</head>
+
+<body>
+    <nav> <!--bootstrap nav bar is better. this might need a rewrite-->
+        <h1 class='navbar-brand skiptranslate'>{% if g.user %}User: {{ g.user.name }} — {% endif %}{{ stamp }}</h1>
+        <div class='list-group list-group-horizontal-sm' style='display:none'>
+            <span class='list-group-item col-sm-3 col-xl-2'>Site Links:</span>
+            {% for func,label in navbar %}
+            <a class='list-group-item list-group-item-action border-top-0 border-bottom-0 col-sm-3 col-xl-2' href='{{ url_for(func) }}'>{{ label }}
+                <span class='badge badge-primary badge-pill float-right'>0</span>
+                <span class="sr-only">is an arbitrary number for the audio-inclined</span>
+            </a>
+            {% endfor %}
+        </div>
+    </nav>
+
+    <header id='dynamic_header'></header>
+
+    <div id='dynamic_content'></div>
+
+    <footer class="fixed-bottom container-fluid">
+        <div class="row row-cols-1">
+            <div class="col d-flex" id='dynamic_footer'></div>
+            <div class="col d-flex p-0">
+                <i class="material-icons skiptranslate align-self-center" style="font-size:270%">language</i>
+                <span id="google_translate_element" class='align-self-center'>
+                    <h3 class='placeholder'>Loading translator...</h3>
+                    <script type="text/javascript">
+                        function googleTranslateElementInit() {
+                            new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+                            document.querySelector('#google_translate_element .placeholder').remove();
+                        }
+                        setTimeout(()=>{
+                            let script = document.createElement('script');
+                            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                            script.type = 'text/javascript';
+                            document.querySelector('#google_translate_element').appendChild(script);
+                        },0);
+                    </script>
+                </span>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function overrideLink(a){
+            if(a.hostname == window.location.hostname){
+                a.addEventListener('click',e => {
+                    e.preventDefault();
+                    handleNavigation(a.pathname);
+                    return false;
+                });
+            }
+            return a.pathname;
+        }
+        const urls = ["{{ url_for('getMain') }}","{{ url_for('getAbout') }}","{{ url_for('checkMC') }}"] //"{{ url_for('getCamera') }}",
+        function resetPrefetch(){
+            document.querySelectorAll('.prefetch_link').forEach(elm => elm.remove());
+            urls.forEach(url => {
+                let link = document.createElement("link");
+                link.href = url;
+                link.rel = "prefetch";
+                link.as = "fetch";
+                link.type = "application/json";
+                link.classList.add('prefetch_link');
+                document.head.appendChild(link);
+            });
+        }
+        function backupErrorPage(code,txt){
+            let err = txt.substring(txt.indexOf('<p>')+3,txt.indexOf('</p>'));
+            document.querySelector('#dynamic_header').insertAdjacentHTML('beforeend',`<h1 class='added_dynamic'>${code}</h1>
+                <h6 class='added_dynamic'>${err}</h6>
+                <a class='added_dynamic' onclick="handleNavigation('{{ url_for("getMain") }}')" href="#">Return to main...</a>`);
+        }
+        function integrateDynamicContent(data){
+            //InnerHTML wouldve sufficed here but somehow it was so hard to find such a widely support function so i consider it a rare gem.
+            for(let [k,v] of Object.entries(data)){
+                let cont = document.querySelector(`#dynamic_${k}`);
+                cont.insertAdjacentHTML('beforeend',v);
+                Array.from(cont.children).forEach(elm => {
+                    elm.classList.add('added_dynamic');
+                    elm.querySelectorAll('a').forEach(overrideLink);
+                });
+            }
+            //resetPrefetch();
+        }
+        async function handleNavigation(url){
+            document.querySelectorAll('.added_dynamic').forEach(elm => elm.remove());
+            let resp = await fetch(url);
+            let raw = await resp.text(); //yes I know there is a json() function, but because the stream gets locked immediately... I need this to display the error.
+            let data = {};
+            try{
+                data = JSON.parse(raw);
+            }catch(e){
+                backupErrorPage(resp.status,raw);
+                return;
+            }
+            integrateDynamicContent(data);
+            let path = resp.url.substr(resp.url.lastIndexOf("/")+1);
+            window.history.pushState(data,'',path);
+            return resp;
+        } 
+        handleNavigation(window.location.href);
+        window.onbeforeunload = () => {
+            document.querySelectorAll('.prefetch_link').forEach(elm => elm.remove());
+            document.cookie = "timestamp=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            return "reset cookie?";
+        }
+        window.onpopstate = e =>{
+            if(e.state){
+                document.querySelectorAll('.added_dynamic').forEach(elm => elm.remove());
+                integrateDynamicContent(e.state);
+            }else{
+                handleNavigation('{{ url_for("getMain") }}');
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+

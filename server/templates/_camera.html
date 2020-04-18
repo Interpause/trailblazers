@@ -1,0 +1,34 @@
+{% macro header() %}
+<h1></h1>
+{% endmacro %}
+
+{% macro title() %}Scan MC{% endmacro %}
+
+{% macro content() %}
+<script></script>
+{% endmacro %}
+
+{% macro footer() %}
+<input id="uploadPicture" type="file" accept="image/*" capture="camera" style="display:none">
+<div class='justify-content-center d-flex col-12'>
+    <button class="btn btn-primary rounded-circle" onclick="document.getElementById('uploadPicture').click()">
+        <i class="material-icons skiptranslate">camera</i>
+    </button>
+</div>
+{% endmacro %}
+
+<!--
+TODO:
+with messages = get_flashed_messages() %}
+  if messages %}
+    <ul class=flashes>
+    for message in messages %}
+      <li>{{ message }}</li>
+    endfor %}
+    </ul>
+endif %}
+flash('You were successfully logged in')
+So, when checkMC is called, it can set a flash message (MC Expired, no MC found, MC still valid,...)
+before redirecting it to the orders or camera page, where it shows up as toast.
+This might have to be implemented in base.html of course.
+-->

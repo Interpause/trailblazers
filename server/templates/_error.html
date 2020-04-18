@@ -1,0 +1,11 @@
+{% extends "utils.html" %}
+
+{% block header %}
+{% set g.header_title = g.header_var.code %}
+{{ super() }}
+<h6>{{ g.header_var.description }}</h6>
+{% for line in g.header_var.traceback %}
+<p style='font-size:0.7rem;line-height:1;margin-bottom:0.3rem;'>{{ line }}</p>
+{% endfor %}
+<span><a href="{{ url_for('getMain') }}">Return to main...</a></span>
+{% endblock %}

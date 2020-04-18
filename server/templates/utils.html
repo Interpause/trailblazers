@@ -1,0 +1,19 @@
+<!--https://stackoverflow.com/questions/13820864/how-to-redefine-macro-in-jinja2-->
+{% macro title(name) %}
+v0x0001 — {% block title %}{{ name }}{% endblock %}
+{% endmacro %}
+
+{% set g = namespace() %}
+
+{% macro header(var) %}
+{% set g.header_var = var %}
+{% block header %}
+{% if g.header_title is undefined %}{% set g.header_title = g.header_var %}{% endif %}
+<h1>{{ g.header_title }}</h1>
+{% endblock %}
+{% endmacro %}
+
+
+
+
+

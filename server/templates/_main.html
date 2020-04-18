@@ -1,0 +1,30 @@
+{% macro head() %}
+<style>
+    #main-btn-container{
+        height:70vmin;
+        width:70vmin;
+    }
+</style>
+{% endmacro %}
+
+{% set menu = [
+    ('checkMC','Order Food','place'),
+    ('getAbout','Deliver','local_shipping'),
+    ('getMain','Settings','settings'),
+    ('getMain','Get Help','help_outline')
+] -%}
+
+{% macro content() %}
+<section id="main-btn-container" class="container-fluid">
+    <div class="row h-100 row-cols-2">
+        {% for func,label,icon in menu %}
+        <div class="col p-1 d-flex">
+            <a class="btn big btn-primary col" href="{{ url_for(func) }}">
+                <i class="material-icons skiptranslate">{{ icon }}</i><br>
+                <label>{{ label }}</label>
+            </a>
+        </div>
+        {% endfor %}  
+    </div>
+</section>
+{% endmacro %}
